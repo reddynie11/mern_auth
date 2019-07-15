@@ -22,6 +22,20 @@ app.post('/user/register', (req,res)=>{
         else{res.json({"Status": "saved", "Data" : data })}
     });
 });
+app.post('/user/login',(req,res)=>{
+    //algo steps
+    //1. check username/email in DB
+    //2. compare password
+    //3. create token in DB & send a cookie as responce
+    User.findOne({'email': req.body.email}, (err,user)=>{
+        if(!user){ return res.json({'Status':'email not registered'});}
+        
+        user.comparePassword(req.body.password, (err,isMatch)=>{
+            if(!isMatch){ return res.json({'Status':'password not match'});}
+        })
+    })
+
+})
 
 const port = process.env.PORT || 5000;
 
