@@ -54,7 +54,7 @@ app.post('/user/login',(req,res)=>{
 
 app.get('/user/logout',auth,(req,res)=>{
     User.findOneAndUpdate(
-        {_id=req.user._id},
+        {_id:req.user._id},
         {token:''},
         (err,data)=>{
             if(err)return res.json({success:false,err})
