@@ -52,6 +52,18 @@ app.post('/user/login',(req,res)=>{
 
 })
 
+app.get('/user/logout',auth,(req,res)=>{
+    User.findOneAndUpdate(
+        {_id=req.user._id},
+        {token:''},
+        (err,data)=>{
+            if(err)return res.json({success:false,err})
+            return res.status(200).send({success:true})
+        }
+        
+    )
+})
+
 const port = process.env.PORT || 5000;
 
 app.listen(port,()=>{
