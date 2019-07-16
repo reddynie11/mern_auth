@@ -1,5 +1,6 @@
 const mongoose = require('mongoose');
 const bcrypt = require('bcrypt');
+const jwt = require('jsonwebtoken');
 const userSchema = mongoose.Schema({
     email : {
         type : String,
@@ -41,7 +42,7 @@ const userSchema = mongoose.Schema({
 
 userSchema.pre('save',function(next){
     var user = this;
-    if(user.isModified(user.password)){
+    if(user.isModified("password")){
         bcrypt.genSalt(10,function(err,salt){
             if (err){
                 return next(err)
@@ -62,7 +63,7 @@ userSchema.pre('save',function(next){
 userSchema.methods.comparePassword = function(userPass,cb){
     bcrypt.compare(userPass,this.password, function(err,isMatch){
         if (err){ return cb(err);}
-        else{cb(isMatch);}
+        else{cb(null,isMatch);}
     })
 }
 

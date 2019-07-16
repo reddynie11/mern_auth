@@ -31,16 +31,17 @@ app.post('/user/login',(req,res)=>{
     //1. check username/email in DB
     //2. compare password
     //3. create token in DB & send a cookie as responce
-    user.findOne({'email': req.body.email}, (err,user)=>{
+    User.findOne({'email': req.body.email}, (err,user)=>{
         if(!user){ return res.json({'Status':'email not registered'});}
         
-        user.comparePassword(req.body.password, (err,isMatch)=>{
-            if(!isMatch){ return res.json({'Status':'password not match'});}
-        })
-        user.generateToken((err,user)=>{
-            if(err) return res.status(400).send(err)
-            res.cookie('login_cookie',user.token).status(200).json({"Login Success":"True"});
-        })
+            user.comparePassword(req.body.password, (err,isMatch)=>{
+                if(!isMatch){ return res.json({'Status':'password not match'});}
+        
+                    user.generateToken((err,user)=>{
+                        if(err) return res.status(400).send(err)
+                        res.cookie('login_cookie',user.token).status(200).json({"Login Success":"True"});
+                    })
+            })
     })
 
 })
