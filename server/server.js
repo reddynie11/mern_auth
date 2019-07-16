@@ -1,6 +1,7 @@
 const express = require('express');
 const bodyParser = require('body-parser');
 const cookieParser = require('cookie-parser');
+const jwt = require('jsonwebtoken');
 const mongoose = require('mongoose');
 
 require('dotenv').config();
@@ -22,16 +23,23 @@ app.post('/user/register', (req,res)=>{
         else{res.json({"Status": "saved", "Data" : data })}
     });
 });
+
+
+
 app.post('/user/login',(req,res)=>{
     //algo steps
     //1. check username/email in DB
     //2. compare password
     //3. create token in DB & send a cookie as responce
-    User.findOne({'email': req.body.email}, (err,user)=>{
+    user.findOne({'email': req.body.email}, (err,user)=>{
         if(!user){ return res.json({'Status':'email not registered'});}
         
         user.comparePassword(req.body.password, (err,isMatch)=>{
             if(!isMatch){ return res.json({'Status':'password not match'});}
+        })
+        user.generateToken((err,user)=>{
+            if(err) return res.status(400).send(err)
+            res.cookie('login_cookie',user.token).status(200).json({"Login Success":"True"});
         })
     })
 

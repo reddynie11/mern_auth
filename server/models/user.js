@@ -56,13 +56,23 @@ userSchema.pre('save',function(next){
                 }
             })
         })
-    }    
+    }else next()   
 })
 
 userSchema.methods.comparePassword = function(userPass,cb){
     bcrypt.compare(userPass,this.password, function(err,isMatch){
         if (err){ return cb(err);}
         else{cb(isMatch);}
+    })
+}
+
+userSchema.methods.generateToken = function(cb){
+    var user = this;
+    var token = jwt.sign(user._id.toHexString(),process.env.SECRET)
+    user.token = token
+    user.save(function(err){
+        if(err) return cb(err);
+        cb(null,user)
     })
 }
 
