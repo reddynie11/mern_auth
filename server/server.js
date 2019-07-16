@@ -7,7 +7,10 @@ const mongoose = require('mongoose');
 require('dotenv').config();
 
 const app = express();
-mongoose.connect(process.env.DATABASE, {useNewUrlParser : true});
+mongoose.connect(process.env.DATABASE, {useNewUrlParser : true},(err)=>{
+    if(err)throw err;
+    console.log("Database connected");
+});
 
 app.use(bodyParser.urlencoded({extended : true}));
 app.use(bodyParser.json());
@@ -15,6 +18,7 @@ app.use(cookieParser());
 
 //models
 const {User}=require('./models/user');
+const {auth}=require('./middleware/auth');
 
 app.post('/user/register', (req,res)=>{
     const user = new User(req.body);
@@ -24,7 +28,9 @@ app.post('/user/register', (req,res)=>{
     });
 });
 
-
+app.get('/user/auth',auth, (req,res)=>{
+    res.json({user:req.user})
+});
 
 app.post('/user/login',(req,res)=>{
     //algo steps
